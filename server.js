@@ -46,14 +46,15 @@ db.run(`CREATE TABLE IF NOT EXISTS messages (
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'Josephatmusyoka138@gmail.com',
+        user: 'Josephatmusyoka138@gmail.com',  // Your email address
         pass: 'ccdr gurj jtcc erjz'  // Use an app-specific password if you're using 2FA
     }
 });
 
 // POST route for handling form submission and sending email confirmation
 app.post('/submit-message', (req, res) => {
-    // Log the incoming data to check for any issues
+    // Log the incoming headers and body
+    console.log('Incoming headers:', req.headers);
     console.log('Received form data:', req.body);
 
     const { name, email, message } = req.body;
@@ -68,7 +69,7 @@ app.post('/submit-message', (req, res) => {
     const stmt = db.prepare('INSERT INTO messages (name, email, message) VALUES (?, ?, ?)');
     stmt.run([name, email, message], (err) => {
         if (err) {
-            console.error('Error inserting message:', err);
+            console.error('Error inserting message into DB:', err);
             return res.status(500).send('Error saving message');
         }
 
@@ -79,7 +80,7 @@ app.post('/submit-message', (req, res) => {
             from: 'Josephatmusyoka138@gmail.com',
             to: email,
             subject: 'Message Received - Kababa TechCare Solutions',
-            text: `Hi ${name},\n\nThank you for reaching out to us! We’ve received your message and will get back to you as soon as possible.\n\nYour Message: \n${message}\n\nBest Regards,\nKababa TechCare Solutions`
+            text: `Hi ${name},\n\nThank you for reaching out! We've received your message: "${message}". We'll get back to you soon.\n\nBest regards,\nKababa TechCare Solutions`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -90,7 +91,7 @@ app.post('/submit-message', (req, res) => {
                     return res.status(500).send('Error sending email');
                 }
             } else {
-                console.log('Email sent: ' + info.response);
+                console.log('Email sent:', info.response);
                 // Ensure we only respond once:
                 if (!res.headersSent) {
                     return res.status(200).send('Message received successfully');

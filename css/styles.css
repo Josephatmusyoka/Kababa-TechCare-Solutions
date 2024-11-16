@@ -24,12 +24,12 @@ a {
     margin: 0 auto;
 }
 
-/* Header Styles */
+/* Basic Styles for Header */
 header {
     background-color: #333;
     color: white;
     padding: 10px 20px;
-    position: fixed; /* Fix the header to the top of the page */
+    position: fixed;
     top: 0;
     width: 100%;
     z-index: 100;
@@ -64,7 +64,7 @@ header h1 {
     letter-spacing: 1px;
 }
 
-/* Navigation Menu */
+/* Navigation Menu Styles */
 header nav {
     display: flex;
     justify-content: flex-end;
@@ -96,7 +96,7 @@ header nav ul li a:hover {
     transform: scale(1.1);
 }
 
-/* Mobile Menu (Hamburger) */
+/* Mobile Menu Toggle (Hamburger) */
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -113,28 +113,17 @@ header nav ul li a:hover {
     transition: all 0.3s ease;
 }
 
-/* Mobile Menu Styles */
-#nav-menu {
-    display: flex;
-    gap: 30px;
-}
-
-/* Mobile Menu - Hidden by default */
-#nav-menu ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
-
+/* Mobile Menu Styles (For screens smaller than 768px) */
 @media (max-width: 768px) {
-  /* For smaller screens, stack logo and menu vertically */
+    /* Make the logo and company name stack vertically */
     header .container {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
     }
 
-    header nav ul {
+    /* Initially hide the navigation menu */
+    #nav-menu ul {
         display: none;
         flex-direction: column;
         align-items: flex-start;
@@ -142,25 +131,43 @@ header nav ul li a:hover {
         width: 100%;
         background-color: #333;
         padding: 20px;
-        margin-top: 10px;;
+        margin-top: 10px;
     }
 
-    header nav ul.active {
-        transform: translateX(0);
-    }
-
-    header nav ul li a {
-        font-size: 1.2rem;
-        padding: 12px;
-    }
-    .menu-toggle {
-        display: flex;
-    }
-    /* When the mobile menu is active, show the navigation items */
+    /* When the 'active' class is added, display the menu */
     #nav-menu.active ul {
         display: flex;
     }
+
+    /* Show the mobile menu toggle (hamburger) icon */
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Hamburger icon animation when the menu is active */
+    .menu-toggle.active .bar:nth-child(1) {
+        transform: rotate(45deg);
+        position: relative;
+        top: 6px;
+    }
+
+    .menu-toggle.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle.active .bar:nth-child(3) {
+        transform: rotate(-45deg);
+        position: relative;
+        top: -6px;
+    }
+
+    /* Increase size of the menu items on mobile */
+    header nav ul li a {
+        font-size: 1.2rem;
+        padding: 15px;
+    }
 }
+
 
 /* Hero Section */
 .hero {
