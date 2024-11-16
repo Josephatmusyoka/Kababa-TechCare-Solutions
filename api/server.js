@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Use CORS middleware to allow cross-origin requests
-app.use(cors());  
+app.use(cors());
 
 // Middleware to parse form data (application/x-www-form-urlencoded or JSON)
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,19 +53,16 @@ const transporter = nodemailer.createTransport({
 
 // POST route for handling form submission and sending email confirmation
 app.post('/submit-message', (req, res) => {
-    // Log the incoming headers and body
     console.log('Incoming headers:', req.headers);
     console.log('Received form data:', req.body);
 
     const { name, email, message } = req.body;
 
-    // Validate that all fields are filled
     if (!name || !email || !message) {
         console.log('Error: Missing form data');
         return res.status(400).send('All fields are required');
     }
 
-    // Insert form data into the 'messages' table in SQLite
     const stmt = db.prepare('INSERT INTO messages (name, email, message) VALUES (?, ?, ?)');
     stmt.run([name, email, message], (err) => {
         if (err) {
@@ -75,7 +72,6 @@ app.post('/submit-message', (req, res) => {
 
         console.log('Message saved:', req.body);  // Log the submitted form data
 
-        // Send a confirmation email to the user
         const mailOptions = {
             from: 'Josephatmusyoka138@gmail.com',
             to: email,
@@ -86,13 +82,11 @@ app.post('/submit-message', (req, res) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log('Error sending email:', error);
-                // Ensure that we only respond once:
                 if (!res.headersSent) {
                     return res.status(500).send('Error sending email');
                 }
             } else {
                 console.log('Email sent:', info.response);
-                // Ensure we only respond once:
                 if (!res.headersSent) {
                     return res.status(200).send('Message received successfully');
                 }
@@ -100,16 +94,15 @@ app.post('/submit-message', (req, res) => {
         });
     });
 
-    // Finalize the statement after execution
     stmt.finalize();
 });
 
 // Serve the HTML page for the home route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));  // Adjust path if necessary
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
+// Export the function to Vercel
+module.exports = (req, res) => {
+    app(req, res);
+};
